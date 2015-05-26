@@ -1,0 +1,45 @@
+#!/bin/bash
+VERSION="v0.10.38"
+DIST="node-"$VERSION
+ARCH=$(uname -m)
+OS=$(uname -s |  tr '[:upper:]' '[:lower:]')
+INSTALL_DIR=$HOME/Developer/tools
+if [[ $ARCH == *"64"* ]]
+then
+	ARCH="x64"
+else
+	ARCH="x86"
+fi
+NAME=$DIST"-"$OS"-"$ARCH
+PACKAGE=$DIST"-"$OS"-"$ARCH".tar.gz"
+cd /tmp
+echo "Downloading nodejs "$VERSION
+curl http://nodejs.org/dist/$VERSION/$PACKAGE -o nodejs.tgz
+mkdir -p $INSTALL_DIR
+cd $INSTALL_DIR
+echo "Installing..."
+tar -xzf /tmp/nodejs.tgz
+rm nodejs
+ln -s $INSTALL_DIR/$NAME nodejs
+
+if (test -f $HOME/.bash_profile) then
+	BASH_FILE=$HOME/.bash_profile
+elif (test -f $HOME/.bashrc) then
+	BASH_FILE=$HOME/.bashrc
+else
+	echo "Could not set nodejs in PATH"
+	exit 1
+fi
+if [[ $PATH == *"nodejs"* ]]
+then
+	echo "PATH already set"
+else
+	echo "PATH="$INSTALL_DIR"/nodejs/bin:\$PATH" >> $BASH_FILE
+fi
+
+if (test $? -gt 0) then
+	echo "Add the below line to your "$BASH_FILE
+	echo "PATH="$INSTALL_DIR"/nodejs/bin:\$PATH"
+else
+	source $BASH_FILE
+fi
