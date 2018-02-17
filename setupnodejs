@@ -1,5 +1,10 @@
 #!/bin/bash
-VERSION="v0.10.38"
+if [ $# -lt 1 ]
+then
+  VERSION="v0.10.38"
+else
+  VERSION="v"$1
+fi
 DIST="node-"$VERSION
 ARCH=$(uname -m)
 OS=$(uname -s |  tr '[:upper:]' '[:lower:]')
